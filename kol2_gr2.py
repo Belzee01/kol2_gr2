@@ -53,7 +53,7 @@ class Student(object):
 		for i in classes:
 			if i.get_score() != 0:
 				result += i.get_score()
-				size++
+				size += 1
 			
 		return result/size
 		
@@ -93,7 +93,7 @@ class Highschool(object):
 		stud.add_score_from_class(score, self.classes)
 		
 	def next_class():
-		self.classes++
+		self.classes += 1
 		for i in students:
 			if i.check_if_student_ill() == True:
 				i.add_attendance(self.classes)
