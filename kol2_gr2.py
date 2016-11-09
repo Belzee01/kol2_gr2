@@ -68,6 +68,9 @@ class Student(object):
 	def check_if_student_ill():
 		return self.ill
 		
+	def set_student_ill(ill):
+		self.ill = ill
+		
 
 class Highschool(object):
 	students = []
@@ -112,6 +115,15 @@ def main():
 	stud2 = Student("Student2", "Nazwisko2")
 	stud3 = Student("Student3", "Nazwisko3")
 	highschool.add_score_for_student(stud1, 3.0)
+	highschool.add_score_for_student(stud2, 2.0)
+	highschool.add_score_for_student(stud3, 5.0)
+	
+	stud1.set_student_ill(True)
+	highschool.next_class()
+	highschool.add_score_for_student(stud2, 2.0)
+	highschool.add_score_for_student(stud3, 5.0)
+	
+	highschool.check_if_student_passes(stud2)
 	
 
 if __name__ == "__main__":
