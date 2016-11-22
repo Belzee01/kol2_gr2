@@ -15,117 +15,81 @@
 # data in text files (YAML, JSON).
 # If you have even more courage, try implementing user interface.
 
-class Classes(object):
-	def __init__(self):
-		self.attendace = 0
-		self.score = 0
-		
-	def add_score(score):
-		self.score = score
-		
-	def add_attendance(attendance):
-		self.attendance = attendance
-		
-	def get_score():
-		return self.score
-		
-	def get_attendance():
-		return self.attendance
+from random import randint
 
-class Student(object):
-	classes = []
-	def __init__(self, name, surname):
-		self.name = name
-		self.surname = surname
-		self.ill = False
-		
-	def add_score_from_class(score, classes):
-		cl = self.classes.index(classes)
-		cl.add_score(score)
-		
-	def add_attendance_on_class(attendance, classes):
-		cl = self.classes.index(classes)
-		cl.add_attendance(attendance)
-		
-	def get_average_score():
-		result = 0
-		size = 0
-		for i in classes:
-			if i.get_score() != 0:
-				result += i.get_score()
-				size += 1
-			
-		return result/size
-		
-	def get_total_attendance():
-		result = 0;
-		for i in classes:
-			if i.get_attendance() != 0:
-				result += i.get_attendance()
-			
-		return result
-		
-	def check_if_student_ill():
-		return self.ill
-		
-	def set_student_ill(ill):
-		self.ill = ill
-		
+
+class Classes(object):
+    def __init__(self, students, absent):
+        self.students = students
+        self.absent = absent
+
+    def add_grades(self):
+        for student in self.students:
+            student["grades"].append(randint(1, 6))
+
 
 class Highschool(object):
-	students = []
-	def __init__(self):
-		self.classes = 1;
-		
-	def add_student(student):
-		self.students.append(student)
-		
-	def get_student(student):
-		return self.students.index(student)
-		
-	def get_student_average_score(student):
-		stud = self.students.index(student)
-		return stud.get_average_score()
-		
-	def get_student_total_attendance(student):
-		stud = self.students.index(student)
-		return stud.get_total_attendance()
-		
-	def add_score_for_student(student, score):
-		stud = self.students.index(student)
-		stud.add_score_from_class(score, self.classes)
-		
-	def next_class():
-		self.classes += 1
-		for i in students:
-			if i.check_if_student_ill() == True:
-				i.add_attendance(self.classes)
-			
-	def check_if_student_passes(student):
-		stud = self.students.index(student)
-		if stud.get_average_score() > 2.0 and stud.get_total_attendance() > 0.9*classes:
-			return True
-		
-		return False
-		
+    def __init__(self):
+        self.classes = []
+
+    def average(self):
+        student_grades = []
+        for clas in self.classes:
+            for stud in clas.students:
+                student_grades.extend(stud["grades"])
+
+        return sum(student_grades) / len(student_grades)
+
+    def class_average(self, c):
+        class_grades = []
+        for clas in self.classes:
+            for stud in clas.students:
+                if c == stud["clas"]:
+                    class_grades.extend(stud["grades"])
+
+        return sum(class_grades) / len(class_grades)
+
+    def next_class(self, clas):
+        self.classes.append(clas)
+        for c in clas.students:
+            c["attendance"] += 1
+
+
 def main():
-	highschool = Highschool()
-	
-	stud1 = Student("Student1", "Nazwisko1")
-	stud2 = Student("Student2", "Nazwisko2")
-	stud3 = Student("Student3", "Nazwisko3")
-	highschool.add_score_for_student(stud1, 3.0)
-	highschool.add_score_for_student(stud2, 2.0)
-	highschool.add_score_for_student(stud3, 5.0)
-	
-	stud1.set_student_ill(True)
-	highschool.next_class()
-	highschool.add_score_for_student(stud2, 2.0)
-	highschool.add_score_for_student(stud3, 5.0)
-	
-	highschool.check_if_student_passes(stud2)
-	
+    students = [
+        {"name": "Kajetan", "surname": "Lipensky", "clas": "1A", "grades": [], "attendance": 0},
+        {"name": "Adam", "surname": "Nowak", "clas": "1B", "grades": [], "attendance": 0},
+        {"name": "Tomasz", "surname": "Laz", "clas": "1A", "grades": [], "attendance": 0},
+        {"name": "Szymon", "surname": "Kubasiak", "clas": "1B", "grades": [], "attendance": 0},
+        {"name": "Krzysztof", "surname": "Jamrog", "clas": "1A", "grades": [], "attendance": 0}
+    ]
+
+    school = Highschool()
+
+    present_list = list(students)
+    present_list.remove(students[1])
+
+    clas1 = Classes(present_list, [students[1]])
+    clas1.add_grades()
+    clas1.add_grades()
+
+    school.next_class(clas1)
+
+    present_list = list(students)
+    present_list.remove(students[1])
+    present_list.remove(students[3])
+    clas2 = Classes(present_list, [students[1], students[3]])
+    clas2.add_grades()
+    school.next_class(clas2)
+
+    print("Average grades for 1A: " + str(school.class_average("1A")))
+
+    print("General students average: " + str(school.average()))
+
+    print("Total attendance for first student: " + str(students[0]["attendance"]))
+
+    print("Total attendance for second student: " + str(students[1]["attendance"]))
+
 
 if __name__ == "__main__":
-	main()
-
+    main()
